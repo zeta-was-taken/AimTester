@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AimTester</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+            overflow: hidden; /* Prevent scrollbars from appearing */
+            color: white; /* Text color for score and timer */
+            font-family: Arial, sans-serif; /* Font for readability */
+        }
+
+        #target {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            background-image: url('./target.jpg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            display: none; /* Hide the target initially */
+        }
+
+        #score, #timer {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #score {
+            top: 20px;
+            left: 20px;
+        }
+
+        #timer {
+            top: 60px; /* Position below the score */
+            left: 20px;
+        }
+
+        #end-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            display: none; /* Hide end message initially */
+        }
+
+        #play-button {
+            padding: 10px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background-color: grey; /* Grey color for the button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .ad-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <button id="play-button">Play</button>
+    <div id="score">Score: 0</div>
+    <div id="timer">Time: 60</div>
+    <div id="target"></div>
+    <div id="end-message"></div>
+
+    <!-- Google AdSense Code -->
+    <div class="ad-container">
+        <!-- Responsive Ad Unit -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-XXXXXX", // Replace with your AdSense client ID
+                enable_page_level_ads: true
+            });
+        </script>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const target = document.getElementById('target');
+            const scoreDisplay = document.getElementById('score');
+            const timerDisplay = document.getElementById('timer');
+            const endMessage = document.getElementById('end-message');
+            const playButton = document.getElementById('play-button');
+            let score = 0;
+            let timeLeft = 60; // 60 seconds
+            let timerInterval; // Variable to store the timer interval
+
+            function moveTarget() {
+                // Get viewport width and height
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                // Random position within the viewport
+                const x = Math.random() * (viewportWidth - target.offsetWidth);
+                const y = Math.random() * (viewportHeight - target.offsetHeight);
+
+                target.style.left = `${x}px`;
+                target.style.top = `${y}px`;
+            }
+
+            function updateScore() {
+                score += 1; // Increase score by 1
+                scoreDisplay.textContent = `Score: ${score}`;
+            }
+
+            function updateTimer() {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval); // Stop the timer
+                    endMessage.textContent = `⏰ Time's Up! Your Score: ${score}`;
+                    endMessage.style.display = 'block'; // Show the end message
+                    target.style.display = 'none'; // Hide the target
+                    return; // Exit the function to prevent further updates
+                }
+
+                timerDisplay.textContent = `Time: ${timeLeft}`;
+                timeLeft -= 1; // Decrease time left by 1
+            }
+
+            function startGame() {
+                score = 0; // Reset score
+                timeLeft = 60; // Reset timer
+                scoreDisplay.textContent = `Score: ${score}`;
+                timerDisplay.textContent = `Time: ${timeLeft}`;
+                endMessage.style.display = 'none'; // Hide end message
+                target.style.display = 'block'; // Show the target
+                moveTarget(); // Initial placement
+
+                // Start the countdown timer
+                timerInterval = setInterval(updateTimer, 1000);
+
+                // Set up the click event listener for the target
+                target.addEventListener('click', () => {
+                    if (timeLeft > 0) { // Check if the game is still running
+                        updateScore(); // Update score when target is clicked
+                        moveTarget(); // Move target to a new position
+                    }
+                });
+
+                // Hide the play button after starting the game
+                playButton.style.display = 'none';
+            }
+
+            playButton.addEventListener('click', startGame); // Start the game when play button is clicked
+        });
+    </script>
+</body>
+</html>
